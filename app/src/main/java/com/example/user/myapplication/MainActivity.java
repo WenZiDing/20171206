@@ -173,6 +173,37 @@ public class MainActivity extends AppCompatActivity {
         } catch (JSONException e) {
             Log.v("brad ",e.toString());
         }
+
+    }
+    public void test4(View view){
+        new Thread(){
+            @Override
+            public void run() {
+                try {
+                    // 1. URL : protocol:// Hostname or ip /.resources...
+                    //10.0.2.2 => 127.0.0.1 alias =>VM
+                    URL url = new URL("http://ip");
+                    HttpURLConnection conn = (HttpURLConnection) url.openConnection();
+                    conn.connect();
+
+                    InputStream in = conn.getInputStream();
+                    BufferedReader br = new BufferedReader(new InputStreamReader(in));
+
+                    String line = null;
+                    sb = new StringBuffer();
+                    while ((line = br.readLine()) != null) {
+                        //Log.v("brad", line);
+                        sb.append(line + "\n");
+                    }
+                    in.close();
+                    parseJSON(sb.toString());
+                    Log.v("brad", "OK");
+
+                } catch (Exception ee) {
+                    Log.v("brad", ee.toString());
+                }
+            }
+        }.start();
     }
 }
 
