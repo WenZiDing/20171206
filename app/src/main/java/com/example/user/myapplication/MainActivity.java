@@ -13,6 +13,9 @@ import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import org.json.JSONArray;
+import org.json.JSONException;
+
 import java.io.BufferedReader;
 import java.io.InputStream;
 import java.io.InputStreamReader;
@@ -32,13 +35,13 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         handler = new UIHandler();
-        tv = (TextView)findViewById(R.id.tv);
-        img = (ImageView)findViewById(R.id.img);
+        tv = (TextView) findViewById(R.id.tv);
+        img = (ImageView) findViewById(R.id.img);
 
     }
 
-    public void test1(View view){
-        new Thread(){
+    public void test1(View view) {
+        new Thread() {
             @Override
             public void run() {
                 connectToLtu();
@@ -47,28 +50,30 @@ public class MainActivity extends AppCompatActivity {
 
     }
 
-    private void connectToLtu(){
+    private void connectToLtu() {
 
         try {
             // 1. URL : protocol:// Hostname or ip /.resources...
             URL url = new URL("http://www.ltu.edu.tw/");
-            HttpURLConnection conn =  (HttpURLConnection)url.openConnection();
+            HttpURLConnection conn = (HttpURLConnection) url.openConnection();
             conn.connect();
 
-            InputStream in =  conn.getInputStream();
+            InputStream in = conn.getInputStream();
             BufferedReader br = new BufferedReader(new InputStreamReader(in));
 
-            String line = null; sb = new StringBuffer();
-            while ((line = br.readLine()) != null){
+            String line = null;
+            sb = new StringBuffer();
+            while ((line = br.readLine()) != null) {
+                Log.v("brad", line);
                 sb.append(line + "\n");
             }
             in.close();
 
-            handler.sendEmptyMessage(0);
+             handler.sendEmptyMessage(0);
 
             Log.v("brad", "OK");
 
-        }catch (Exception ee){
+        } catch (Exception ee) {
             Log.v("brad", ee.toString());
         }
     }
@@ -78,7 +83,7 @@ public class MainActivity extends AppCompatActivity {
         public void handleMessage(Message msg) {
             super.handleMessage(msg);
 
-            switch (msg.what){
+            switch (msg.what) {
                 case 0:
                     tv.setText(sb);
                     break;
@@ -89,8 +94,8 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
-    public void test2(View view){
-        new Thread(){
+    public void test2(View view) {
+        new Thread() {
             @Override
             public void run() {
                 getImage();
@@ -98,33 +103,67 @@ public class MainActivity extends AppCompatActivity {
         }.start();
     }
 
-    private void getImage(){
+    private void getImage() {
         try {
             URL url = new URL("http://www.ltu.edu.tw/ezfiles/0/1000/img/44/110042000.jpg");
-            HttpURLConnection conn = (HttpURLConnection)url.openConnection();
+            HttpURLConnection conn = (HttpURLConnection) url.openConnection();
             conn.connect();
 
             bmp = BitmapFactory.decodeStream(conn.getInputStream());
             handler.sendEmptyMessage(1);
 
             Log.v("brad", "OK2");
-        }catch (Exception e){
+        } catch (Exception e) {
             Log.v("brad", e.toString());
         }
 
     }
 
-    public void test3(View view){
-        new Thread(){
+    public void test3(View view) {
+        new Thread() {
             @Override
             public void run() {
                 super.run();
+                getOpenData();
             }
         }.start();
     }
 
-    private  void  getOpenData(){
+    private void getOpenData() {
 
+        try {
+            // 1. URL : protocol:// Hostname or ip /.resources...
+            URL url = new URL("http://data.coa.gov.tw/Service/OpenData/ODwsv/ODwsvTravelFood.aspx");
+            HttpURLConnection conn = (HttpURLConnection) url.openConnection();
+            conn.connect();
+
+            InputStream in = conn.getInputStream();
+            BufferedReader br = new BufferedReader(new InputStreamReader(in));
+
+            String line = null;
+            sb = new StringBuffer();
+            while ((line = br.readLine()) != null) {
+                Log.v("brad", line);
+                sb.append(line + "\n");
+            }
+            in.close();
+
+            // handler.sendEmptyMessage(0);
+
+            Log.v("brad", "OK");
+
+        } catch (Exception ee) {
+            Log.v("brad", ee.toString());
+        }
     }
 
+    private void parseJSON(String json) {
+        try {
+            JSONArray root = new JSONArray(json);
+            Log.v("brad ","count:"+root.length());
+        } catch (JSONException e) {
+            Log.v("brad ",e.toString());
+        }
+    }
 }
+
