@@ -166,7 +166,7 @@ public class MainActivity extends AppCompatActivity {
                 String name = rec.getString("Name");
                 String address = rec.getString("Address");
                 String tel = rec.getString("Tel");
-                String host = rec.getString("HostWords");
+
                 Log.v("brad ",name+":"+address+":"+tel+":");
             }
 
